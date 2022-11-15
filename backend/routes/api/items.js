@@ -144,9 +144,14 @@ router.post("/", auth.required, function(req, res, next) {
         return res.sendStatus(401);
       }
 
+
+
+
+      
       var item = new Item(req.body.item);
 
       item.seller = user;
+      item.image = req.body.item.image || "/placeholder.png";
 
       return item.save().then(function() {
         sendEvent('item_created', { item: req.body.item })
@@ -230,6 +235,7 @@ router.post("/:item/favorite", auth.required, function(req, res, next) {
       if (!user) {
         return res.sendStatus(401);
       }
+
 
       return user.favorite(itemId).then(function() {
         return req.item.updateFavoriteCount().then(function(item) {
