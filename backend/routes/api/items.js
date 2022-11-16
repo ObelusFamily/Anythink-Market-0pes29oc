@@ -143,14 +143,11 @@ router.post("/", auth.required, function(req, res, next) {
       if (!user) {
         return res.sendStatus(401);
       }
-
-
-
-
-      
+     
       var item = new Item(req.body.item);
 
       item.seller = user;
+      // this is the fix for the backend api issue
       item.image = req.body.item.image || "/placeholder.png";
 
       return item.save().then(function() {
