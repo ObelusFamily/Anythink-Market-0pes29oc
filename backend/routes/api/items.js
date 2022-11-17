@@ -172,7 +172,8 @@ router.get("/:item", auth.optional, function(req, res, next) {
 
 // returns item by title
 router.get('/', function(req, res, next) {
-  Item.find().distinct('title').then(function(title){
+  
+  Item.find().distinct(req.body.item.title).then(function(title){
     return res.json({title: title});
   }).catch(next);
 });
