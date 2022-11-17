@@ -171,10 +171,10 @@ router.get("/:item", auth.optional, function(req, res, next) {
 });
 
 // returns item by title
-router.get('/', function(req, res, next) {
-  Item.find().distinct(req.body.item.title).then(function(title){
-    return res.json({title: title});
-  }).catch(next);
+router.get('/', function(req, res) {
+  let bookTitle = req.body.title;
+  Item.find({title : bookTitle})
+    .then(items => res.json(items))
 });
 
 
