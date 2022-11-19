@@ -74,7 +74,7 @@ router.get("/", auth.optional, function(req, res, next) {
         query._id = { $in: [] };
       }
 
-      if(title){
+      if(titlenames){
         query.title = titlenames.title;
       }
 
