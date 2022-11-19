@@ -53,13 +53,19 @@ router.get("/", auth.optional, function(req, res, next) {
     query.tagList = { $in: [req.query.tag] };
   }
 
+  if (typeof req.query.title !== "undefined"){
+    query.title = { $in : [req.query.title]}
+  }
+
   Promise.all([
     req.query.seller ? User.findOne({ username: req.query.seller }) : null,
-    req.query.favorited ? User.findOne({ username: req.query.favorited }) : null
+    req.query.favorited ? User.findOne({ username: req.query.favorited }) : null,
+    req.query.title ? Item.findOne({title : req.query.title}) : null
   ])
     .then(function(results) {
       var seller = results[0];
       var favoriter = results[1];
+      var title = results[2];
 
       if (seller) {
         query.seller = seller._id;
@@ -168,13 +174,6 @@ router.get("/:item", auth.optional, function(req, res, next) {
       return res.json({ item: req.item.toJSONFor(user) });
     })
     .catch(next);
-});
-
-// returns item by title
-router.get('/', function(req, res) {
-  let bookTitle = req.body.title;
-  Item.find({title : bookTitle})
-    .then(items => res.json(items))
 });
 
 
