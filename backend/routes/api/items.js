@@ -53,11 +53,11 @@ router.get("/", auth.optional, function(req, res, next) {
     query.tagList = { $in: [req.query.tag] };
   }
 
-
+  
   Promise.all([
     req.query.seller ? User.findOne({ username: req.query.seller }) : null,
     req.query.favorited ? User.findOne({ username: req.query.favorited }) : null,
-    req.query.title ? Item.findOne({title : { $regex: [req.query.title], $options: "i"} } ) : null
+    req.query.title ? Item.findOne({title : { $regex: req.query.title, $options: "i"} } ) : null
   ])
     .then(function(results) {
       var seller = results[0];
@@ -75,7 +75,7 @@ router.get("/", auth.optional, function(req, res, next) {
       }
 
       if(itemsBytitle){
-        query._id = itemsBytitle._id;
+        query.title = itemsBytitle.title;
       }
 
       return Promise.all([
