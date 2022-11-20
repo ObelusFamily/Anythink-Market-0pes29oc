@@ -53,13 +53,16 @@ router.get("/", auth.optional, function(req, res, next) {
     query.tagList = { $in: [req.query.tag] };
   }
 
+  
   Promise.all([
     req.query.seller ? User.findOne({ username: req.query.seller }) : null,
-    req.query.favorited ? User.findOne({ username: req.query.favorited }) : null
+    req.query.favorited ? User.findOne({ username: req.query.favorited }) : null,
+    req.query.title ? Item.findOne({title : { $regex: req.query.title, $options: "i"} } ) : null
   ])
     .then(function(results) {
       var seller = results[0];
       var favoriter = results[1];
+      var itemsBytitle = results[2];
 
       if (seller) {
         query.seller = seller._id;
@@ -69,6 +72,10 @@ router.get("/", auth.optional, function(req, res, next) {
         query._id = { $in: favoriter.favorites };
       } else if (req.query.favorited) {
         query._id = { $in: [] };
+      }
+
+      if(itemsBytitle){
+        query.title = itemsBytitle.title;
       }
 
       return Promise.all([
@@ -169,6 +176,7 @@ router.get("/:item", auth.optional, function(req, res, next) {
     })
     .catch(next);
 });
+
 
 // update item
 router.put("/:item", auth.required, function(req, res, next) {
